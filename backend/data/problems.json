@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "title": "Two Sum",
+    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target."
+  },
+  {
+    "id": 2,
+    "title": "Longest Substring Without Repeating Characters",
+    "description": "Given a string s, find the length of the longest substring without repeating characters."
+  },
+  {
+    "id": 3,
+    "title": "Valid Parentheses",
+    "description": "Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid."
+  }
+]

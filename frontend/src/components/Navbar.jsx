@@ -9,6 +9,7 @@ export default function Navbar() {
     { path: "/problems", label: "Problems" },
     { path: "/mentor-agent", label: "Mentor Agent" },
     { path: "/mentor", label: "Mentor" },
+    { path: "/practice/1", label: "Practice" },
   ];
 
   return (

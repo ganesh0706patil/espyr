@@ -2,20 +2,19 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 class ChatMessage(BaseModel):
-    sender: str  # 'mentor', 'user', or 'codeAgent'
+    sender: str
     text: str
 
 class MentorRequest(BaseModel):
-    user_input: str
     skill_level: str
-    problem_id: str
+    user_message: str
 
 class MentorResponse(BaseModel):
-    message: str
+    messages: List[ChatMessage]
 
 class CodeAgentRequest(BaseModel):
     code: str
-    question: Optional[str] = None
+    question: Optional[str]
 
 class CodeAgentResponse(BaseModel):
     feedback: str

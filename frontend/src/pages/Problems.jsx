@@ -1,5 +1,88 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
+export default function Problems() {
+  const [questions, setQuestions] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [clickedIndex, setClickedIndex] = useState(null);
+  const navigate = useNavigate();
+
+  // Load questions from src/data/questions.json
+  useEffect(() => {
+    // Option 1: Import the JSON file directly (recommended)
+    import('../data/questions.json')
+      .then(module => {
+        setQuestions(module.default);
+      })
+      .catch((err) => console.error("Failed to load questions:", err));
+
+    // Option 2: If you prefer fetch and move the file to public folder
+    // fetch("/data/questions.json")
+    //   .then((res) => res.json())
+    //   .then(setQuestions)
+    //   .catch((err) => console.error("Failed to load questions:", err));
+  }, []);
+
+  const handleCodeClick = (index, questionId) => {
+    setClickedIndex(index);
+    setTimeout(() => setClickedIndex(null), 1000);
+    navigate(`/practice/${questionId}`);
+  };
+
+  return (
+    <div style={containerStyle}>
+      <div style={questionsListStyle}>
+        {questions.map((q, i) => (
+          <div
+            key={q.id}
+            style={{
+              ...questionItemStyle,
+              border: selectedIndex === i ? "2px solid #3b82f6" : "none",
+              cursor: "pointer",
+            }}
+            onClick={() => setSelectedIndex(i)}
+          >
+            <div>
+              <strong>{q.title}</strong>
+              <div style={{ fontSize: "0.9rem", color: "#666" }}>
+                Difficulty: {q.difficulty}
+              </div>
+            </div>
+            <button
+              style={buttonStyle}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCodeClick(i, q.id);
+              }}
+            >
+              Code
+            </button>
+            {clickedIndex === i && (
+              <div style={messageStyle}>Loading editor...</div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div style={{ flex: 1, padding: "1rem" }}>
+        {selectedIndex !== null ? (
+          <>
+            <h2>{questions[selectedIndex].title}</h2>
+            <p>{questions[selectedIndex].description}</p>
+            <p>
+              <strong>Difficulty: </strong>
+              {questions[selectedIndex].difficulty}
+            </p>
+          </>
+        ) : (
+          <h2>Select a question to view details</h2>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// 💄 Inline Styles
 const containerStyle = {
   display: "flex",
   height: "80vh",
@@ -37,7 +120,6 @@ const buttonStyle = {
   color: "white",
   cursor: "pointer",
   fontWeight: "600",
-  transition: "background-color 0.3s ease",
 };
 
 const messageStyle = {
@@ -48,87 +130,3 @@ const messageStyle = {
   borderRadius: "6px",
   fontWeight: "600",
 };
-
-export default function Problems() {
-  const [clickedIndex, setClickedIndex] = useState(null);
-  const [selectedIndex, setSelectedIndex] = useState(null);
-
-  const questions = [
-    {
-      title: "Two Sum",
-      description:
-        "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-      difficulty: "Easy",
-    },
-    {
-      title: "Longest Substring Without Repeating Characters",
-      description:
-        "Find the length of the longest substring without repeating characters.",
-      difficulty: "Medium",
-    },
-    {
-      title: "Median of Two Sorted Arrays",
-      description:
-        "Find the median of two sorted arrays.",
-      difficulty: "Hard",
-    },
-    // Add more questions if needed...
-  ];
-
-  const handleCodeClick = (index) => {
-    setClickedIndex(index);
-    setTimeout(() => setClickedIndex(null), 3000);
-  };
-
-  return (
-    <div style={containerStyle}>
-      <div style={questionsListStyle}>
-        {questions.map((q, i) => (
-          <div
-            key={i}
-            style={{
-              ...questionItemStyle,
-              border: selectedIndex === i ? "2px solid #3b82f6" : "none",
-              cursor: "pointer",
-            }}
-            onClick={() => setSelectedIndex(i)}
-          >
-            <div>
-              <strong>{q.title}</strong>
-              <div style={{ fontSize: "0.9rem", color: "#666" }}>
-                Difficulty: {q.difficulty}
-              </div>
-            </div>
-            <button
-              style={buttonStyle}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCodeClick(i);
-              }}
-            >
-              Code
-            </button>
-            {clickedIndex === i && (
-              <div style={messageStyle}>Backend not yet connected.</div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div style={{ flex: 1, padding: "1rem" }}>
-        {selectedIndex !== null ? (
-          <>
-            <h2>{questions[selectedIndex].title}</h2>
-            <p>{questions[selectedIndex].description}</p>
-            <p>
-              <strong>Difficulty: </strong>
-              {questions[selectedIndex].difficulty}
-            </p>
-          </>
-        ) : (
-          <h2>Select a question to view details</h2>
-        )}
-      </div>
-    </div>
-  );
-}

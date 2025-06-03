@@ -19,7 +19,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/problems" element={<Problems />} />
             <Route path="/mentor-agent" element={<MentorAgent />} />
-            <Route path="/practice" element={<Practice />} />
+            <Route path="/practice/:id" element={<Practice />} />
             <Route path="/mentor" element={<MentorPage />} />
           </Routes>
         </main>
