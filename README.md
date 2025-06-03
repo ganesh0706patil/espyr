@@ -63,3 +63,19 @@ GET	/problems	Fetch all DSA problems
 POST	/mentor-agent/	Interact with mentor agent
 POST	/code-agent/	(Planned) Code evaluations
 /practice for code editor
+```
+
+#### 🤝 Contributing
+
+We welcome contributions from everyone! To contribute:
+
+1. Fork this repository
+2. Clone your fork
+3. Create a new branch: `git checkout -b feature/your-feature-name`
+4. Make your changes
+5. Commit and push: `git commit -m "Add your message"` and `git push origin branch-name`
+6. Open a Pull Request (PR)
+
+We'll review and merge your PR as soon as possible!
+
+Feel free to open issues if you spot bugs or have suggestions. 🙌
