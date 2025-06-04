@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const skillLevels = ["Beginner", "Intermediate", "Advanced"];
 
@@ -39,7 +40,9 @@ export default function DynamicMentor() {
 
   function handleUserSubmit() {
     if (!userInput.trim()) return;
-    setChat((prev) => [...prev, { from: "user", text: userInput }]);
+    
+    const newUserMessage = { from: "user", text: userInput };
+    setChat((prev) => [...prev, newUserMessage]);
     setUserInput("");
 
     const allMessages = mentorScripts[skill];
@@ -48,61 +51,112 @@ export default function DynamicMentor() {
     if (nextIndex < allMessages.length) {
       const nextMsg = allMessages[nextIndex];
       if (nextMsg.from === "mentor" || nextMsg.from === "codeAgent") {
-        setChat((prev) => [...prev, nextMsg]);
-        if (nextMsg.toolCall === "open_editor") {
-          setEditorOpen(true);
-        }
+        setTimeout(() => {
+          setChat((prev) => [...prev, nextMsg]);
+          if (nextMsg.toolCall === "open_editor") {
+            setEditorOpen(true);
+          }
+        }, 800);
       }
     }
   }
 
   return (
-    <div className="flex h-[90vh] font-sans">
-      <div className="flex-1 border-r border-gray-300 p-5 flex flex-col bg-white">
-        <h3 className="text-lg font-semibold mb-4">Choose Skill Level</h3>
-        <select
+    <div className="flex h-[90vh] font-sans bg-white text-gray-900">
+      <motion.div 
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex-1 border-r border-orange-200 p-6 flex flex-col"
+      >
+        <motion.h3 
+          whileHover={{ scale: 1.02 }}
+          className="text-2xl font-bold mb-6 text-orange-800"
+        >
+          Choose Skill Level
+        </motion.h3>
+        
+        <motion.select
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           value={skill}
           onChange={(e) => setSkill(e.target.value)}
-          className="mb-5 p-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mb-6 p-3 text-base border-2 border-orange-300 cursor-pointer rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-black shadow-sm"
         >
           {skillLevels.map((lvl) => (
-            <option key={lvl} value={lvl}>
+            <option key={lvl} value={lvl} className="bg-white text-black">
               {lvl}
             </option>
           ))}
-        </select>
+        </motion.select>
 
-        <div className="flex-1 overflow-y-auto border border-gray-300 p-3 bg-gray-50 rounded-md mb-3">
-          {chat.map((msg, i) => (
-            <div
-              key={i}
-              className={`mb-3 whitespace-pre-wrap ${
-                msg.from === "mentor" || msg.from === "codeAgent" ? "text-left" : "text-right"
-              }`}
-            >
-              <strong
-                className={`${
-                  msg.from === "mentor"
-                    ? "text-blue-600"
-                    : msg.from === "codeAgent"
-                    ? "text-purple-700 italic"
-                    : "text-green-700"
+        <motion.div 
+          whileHover={{ scale: 1.005 }}
+          className="flex-1 overflow-y-auto border-2 border-orange-200 p-4 bg-orange-50 rounded-xl mb-4 shadow-inner"
+        >
+          <AnimatePresence>
+            {chat.map((msg, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ 
+                  opacity: 1, 
+                  y: 0,
+                  transition: { 
+                    type: "spring", 
+                    stiffness: 500, 
+                    damping: 30 
+                  } 
+                }}
+                exit={{ opacity: 0 }}
+                className={`mb-4 whitespace-pre-wrap ${
+                  msg.from === "mentor" || msg.from === "codeAgent" ? "text-left" : "text-right"
                 }`}
               >
-                {msg.from === "mentor"
-                  ? "Mentor"
-                  : msg.from === "codeAgent"
-                  ? "Code Agent"
-                  : "You"}
-                :
-              </strong>{" "}
-              {msg.text}
-            </div>
-          ))}
-        </div>
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  className={`inline-block max-w-3/4 p-4 rounded-xl shadow-sm ${
+                    msg.from === "mentor"
+                      ? "bg-orange-100 text-orange-900 border-l-4 border-orange-600"
+                      : msg.from === "codeAgent"
+                      ? "bg-purple-100 text-purple-900 border-l-4 border-purple-600"
+                      : "bg-gray-100 text-gray-900 border-l-4 border-gray-600"
+                  }`}
+                >
+                  <strong
+                    className={`text-sm font-semibold ${
+                      msg.from === "mentor"
+                        ? "text-orange-700"
+                        : msg.from === "codeAgent"
+                        ? "text-purple-700"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    {msg.from === "mentor"
+                      ? "Mentor"
+                      : msg.from === "codeAgent"
+                      ? "Code Agent"
+                      : "You"}
+                    :
+                  </strong>{" "}
+                  <span className="text-black">{msg.text}</span>
+                </motion.div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
 
-        <div className="flex items-center">
-          <input
+        <motion.div 
+          className="flex items-center mt-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <motion.input
+            whileFocus={{ 
+              scale: 1.01,
+              boxShadow: "0 0 0 2px rgba(234, 88, 12, 0.5)"
+            }}
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
@@ -112,31 +166,71 @@ export default function DynamicMentor() {
             onKeyDown={(e) => {
               if (e.key === "Enter") handleUserSubmit();
             }}
-            className="w-3/4 p-3 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 p-3 text-base border-2 border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-black shadow-sm"
           />
-          <button
+          <motion.button
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+            }}
+            whileTap={{ 
+              scale: 0.98,
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+            }}
             onClick={handleUserSubmit}
             disabled={!userInput.trim()}
-            className={`ml-3 px-5 py-3 font-semibold rounded-md text-white ${
+            className={`ml-3 px-6 py-3 font-bold rounded-xl ${
               userInput.trim()
-                ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                : "bg-blue-300 cursor-not-allowed"
+                ? "bg-orange-700 hover:bg-orange-800 cursor-pointer text-white shadow-md"
+                : "bg-orange-200 cursor-not-allowed text-orange-400"
             }`}
           >
             Submit
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
 
-      <div className={`flex-1 ${editorOpen ? "block" : "hidden"}`}>
-        <Editor
-          height="100%"
-          defaultLanguage="javascript"
-          value={code}
-          onChange={(val) => setCode(val)}
-          options={{ minimap: { enabled: false }, fontSize: 16, wordWrap: "on" }}
-        />
-      </div>
+      <AnimatePresence>
+        {editorOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ 
+              opacity: 1, 
+              x: 0,
+              transition: { 
+                type: "spring", 
+                stiffness: 400, 
+                damping: 30 
+              } 
+            }}
+            exit={{ opacity: 0, x: 20 }}
+            className="flex-1 border-l border-orange-200"
+          >
+            <Editor
+              height="100%"
+              defaultLanguage="javascript"
+              value={code}
+              onChange={(val) => setCode(val)}
+              theme="vs"
+              options={{ 
+                minimap: { enabled: false }, 
+                fontSize: 16, 
+                wordWrap: "on",
+                glyphMargin: true,
+                lineNumbersMinChars: 3,
+                folding: true,
+                renderLineHighlight: 'gutter',
+                overviewRulerBorder: false,
+                scrollbar: {
+                  vertical: 'hidden',
+                  horizontal: 'hidden',
+                  handleMouseWheel: true
+                }
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

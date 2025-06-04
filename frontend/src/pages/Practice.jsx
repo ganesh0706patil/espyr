@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
+import Navbar from "../components/Navbar";
 
 const CHAT_KEY = "practice_chat_map";
 const CODE_KEY = "practice_code_map";
@@ -23,7 +24,7 @@ const LANGUAGES = [
 // Default code templates for each language
 const DEFAULT_CODE_TEMPLATES = {
   javascript: '// Start coding here\nfunction solution() {\n    // Your code here\n}',
-  python: '# Start coding here\ndef solution():\n    # Your code here\n    pass',
+  python: '# Start coding here\ndef solution():\n    // Your code here\n    pass',
   java: '// Start coding here\npublic class Solution {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}',
   cpp: '// Start coding here\n#include <iostream>\nusing namespace std;\n\nint main() {\n    // Your code here\n    return 0;\n}',
   c: '// Start coding here\n#include <stdio.h>\n\nint main() {\n    // Your code here\n    return 0;\n}',
@@ -37,7 +38,7 @@ const DEFAULT_CODE_TEMPLATES = {
 export default function Practice() {
   const { id } = useParams();
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState("text/x-c++src");
+  const [language, setLanguage] = useState("javascript");
   const [chatMessages, setChatMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [problem, setProblem] = useState(null);
@@ -123,7 +124,7 @@ export default function Practice() {
     }
 
     // Load new question's data
-    const questionLanguage = languageMapRef.current[id] || "text/x-c++src";
+    const questionLanguage = languageMapRef.current[id] || "javascript";
     const questionCode = codeMapRef.current[`${id}-${questionLanguage}`] || DEFAULT_CODE_TEMPLATES[questionLanguage];
     const questionChat = chatMapRef.current[id] || [
       { from: "ai", text: "Ask me anything about this problem!" }
@@ -211,7 +212,6 @@ export default function Practice() {
       setIsLoading(false);
     }
   }, [code, language, id, problem]);
-  
 
   const clearChat = useCallback(() => {
     const defaultChat = [{ from: "ai", text: "Ask me anything about this problem!" }];
@@ -250,329 +250,163 @@ export default function Practice() {
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty?.toLowerCase()) {
-      case 'easy': return 'bg-green-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'hard': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case 'easy': return 'bg-green-100 text-green-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'hard': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   return (
-    <div className="flex h-[90vh] font-sans">
-      {/* Left Panel */}
-      <div className="flex-1 border-r border-gray-200 flex flex-col bg-gray-50">
-        {problem ? (
-          <div className="p-5 border-b border-gray-200 bg-white">
-            <h2 className="m-0 mb-4 text-blue-700 text-2xl">{problem.title}</h2>
-            <p className="m-0 mb-4 text-gray-700 leading-relaxed">{problem.description}</p>
-            <p className="m-0 flex items-center gap-2">
-              <strong>Difficulty:</strong>
-              <span className={`text-white px-3 py-1 rounded-full text-sm font-bold ${getDifficultyColor(problem.difficulty)}`}>
-                {problem.difficulty}
-              </span>
-            </p>
-          </div>
-        ) : (
-          <div className="p-5 text-center text-gray-500">Loading problem...</div>
-        )}
-
-        {/* Chat Section */}
-        <div className="flex-1 m-2 flex flex-col bg-white rounded-lg border border-gray-200">
-          <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-            <h3 className="m-0 text-lg text-blue-700">AI Assistant</h3>
-            <button 
-              onClick={clearChat} 
-              className="px-3 py-1 border border-gray-200 rounded bg-white cursor-pointer text-sm"
-            >
-              Clear
-            </button>
-          </div>
-
-          <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-2">
-            {chatMessages.map((msg, i) => (
-              <div
-                key={`${id}-${i}`}
-                className={`max-w-[85%] p-3 rounded-xl border border-gray-200 ${
-                  msg.from === "ai" 
-                    ? "self-start bg-blue-50" 
-                    : "self-end bg-green-50"
-                }`}
-              >
-                <div className="text-sm font-bold mb-1 opacity-80">
-                  {msg.from === "ai" ? "🤖 AI" : "👤 You"}
-                </div>
-                <div className="leading-relaxed whitespace-pre-wrap">
-                  {msg.text}
+    <div className="min-h-screen bg-white">
+      <Navbar />
+      <div className="flex h-[calc(100vh-64px)]">
+        {/* Left Panel - Problem and Chat */}
+        <div className="w-1/2 flex flex-col border-r border-gray-200">
+          {/* Problem Section */}
+          <div className="p-6 bg-white border-b border-gray-200">
+            {problem ? (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">{problem.title}</h2>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  {problem.description}
+                </p>
+                <div className="flex items-center space-x-4">
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(problem.difficulty)}`}>
+                    {problem.difficulty}
+                  </span>
                 </div>
               </div>
-            ))}
-            {isLoading && (
-              <div className="max-w-[85%] p-3 rounded-xl border border-gray-200 self-start bg-gray-50">
-                <div className="text-sm font-bold mb-1 opacity-80">🤖 AI</div>
-                <div className="leading-relaxed">Thinking...</div>
-              </div>
+            ) : (
+              <div className="text-center text-gray-500">Loading problem...</div>
             )}
           </div>
 
-          {/* Chat Actions */}
-          <div className="p-4 flex gap-2 border-t border-gray-200 bg-gray-50 rounded-b-lg">
-            <button
-              onClick={() => handleSendMessage()}
-              disabled={isLoading}
-              className={`flex-1 py-2 rounded text-white font-medium text-sm transition-opacity ${
-                isLoading ? 'bg-blue-400' : 'bg-blue-500 hover:opacity-90'
-              }`}
-            >
-              {isLoading ? "Analyzing..." : "Analyze Code"}
-            </button>
+          {/* Chat Section */}
+          <div className="flex-1 flex flex-col bg-white">
+            <div className="flex justify-between items-center p-4 bg-orange-50 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-orange-800">AI Assistant</h3>
+              <button 
+                onClick={clearChat} 
+                className="px-3 py-1 rounded-md text-sm font-medium bg-white text-orange-600 border border-orange-200 hover:bg-orange-50 transition-colors cursor-pointer"
+              >
+                Clear Chat
+              </button>
+            </div>
 
-            <button
-              onClick={handleHint}
-              disabled={isLoading}
-              className="flex-1 py-2 rounded text-white font-medium text-sm bg-green-500 hover:opacity-90 disabled:opacity-70"
-            >
-              Get Hint
-            </button>
-
-            <button
-              onClick={handleExplain}
-              disabled={isLoading}
-              className="flex-1 py-2 rounded text-white font-medium text-sm bg-yellow-500 hover:opacity-90 disabled:opacity-70"
-            >
-              Explain
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Panel - Editor */}
-      <div className="flex-1 flex flex-col">
-        <div className="flex justify-between items-center p-3 bg-gray-50 border-b border-gray-200">
-          <span className="font-medium text-gray-700">Code Editor</span>
-          <div className="flex items-center gap-2">
-            <select
-              value={language}
-              onChange={(e) => handleLanguageChange(e.target.value)}
-              className="ml-2 px-2 py-1 rounded border border-gray-200 text-sm"
-            >
-              {LANGUAGES.map((lang) => (
-                <option key={lang.id} value={lang.id}>
-                  {lang.name}
-                </option>
+            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+              {chatMessages.map((msg, i) => (
+                <div
+                  key={`${id}-${i}`}
+                  className={`max-w-[85%] p-4 rounded-lg ${
+                    msg.from === "ai" 
+                      ? "bg-orange-50 text-gray-800 rounded-tl-none" 
+                      : "bg-orange-100 text-gray-800 rounded-tr-none ml-auto"
+                  }`}
+                >
+                  <div className="font-semibold mb-1">
+                    {msg.from === "ai" ? "🤖 AI Assistant" : "👤 You"}
+                  </div>
+                  <div className="whitespace-pre-wrap">
+                    {msg.text}
+                  </div>
+                </div>
               ))}
-            </select>
-            <button 
-              onClick={clearCode} 
-              className="px-3 py-1 border border-gray-200 rounded bg-white cursor-pointer text-sm text-red-600"
-            >
-              Clear Code
-            </button>
+              {isLoading && (
+                <div className="max-w-[85%] p-4 rounded-lg bg-orange-50 text-gray-800 rounded-tl-none">
+                  <div className="font-semibold mb-1">🤖 AI Assistant</div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></div>
+                    <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse delay-100"></div>
+                    <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse delay-200"></div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Chat Actions */}
+            <div className="p-4 bg-orange-50 border-t border-gray-200 space-x-2 flex">
+              <button
+                onClick={() => handleSendMessage()}
+                disabled={isLoading}
+                className={`flex-1 py-2 rounded-md font-medium text-sm transition-colors ${
+                  isLoading ? 'bg-orange-300 text-white' : 'bg-orange-600 text-white hover:bg-orange-700 cursor-pointer'
+                }`}
+              >
+                {isLoading ? "Analyzing..." : "Analyze Code"}
+              </button>
+
+              <button
+                onClick={handleHint}
+                disabled={isLoading}
+                className="px-4 py-2 rounded-md font-medium text-sm bg-white text-orange-600 border border-orange-300 hover:bg-orange-50 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                Hint
+              </button>
+
+              <button
+                onClick={handleExplain}
+                disabled={isLoading}
+                className="px-4 py-2 rounded-md font-medium text-sm bg-white text-orange-600 border border-orange-300 hover:bg-orange-50 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                Explain
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="flex-1">
-          <Editor
-            height="100%"
-            language={language}
-            value={code}
-            onChange={handleCodeChange}
-            options={{
-              minimap: { enabled: false },
-              fontSize: 16,
-              wordWrap: "on",
-              scrollBeyondLastLine: false,
-              automaticLayout: true,
-              tabSize: 2,
-              insertSpaces: true,
-            }}
-          />
+        {/* Right Panel - Editor */}
+        <div className="w-1/2 flex flex-col bg-white">
+          <div className="flex justify-between items-center p-4 bg-orange-50 border-b border-gray-200">
+            <span className="font-medium text-orange-800">Code Editor</span>
+            <div className="flex items-center space-x-2">
+              <select
+                value={language}
+                onChange={(e) => handleLanguageChange(e.target.value)}
+                className="px-3 py-1 rounded-md border border-orange-200 bg-white text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
+              >
+                {LANGUAGES.map((lang) => (
+                  <option key={lang.id} value={lang.id}>
+                    {lang.name}
+                  </option>
+                ))}
+              </select>
+              <button 
+                onClick={clearCode} 
+                className="px-3 py-1 rounded-md text-sm font-medium bg-white text-orange-600 border border-orange-200 hover:bg-orange-50 transition-colors cursor-pointer"
+              >
+                Clear Code
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1">
+            <Editor
+              height="100%"
+              language={language}
+              value={code}
+              onChange={handleCodeChange}
+              theme="light"
+              options={{
+                minimap: { enabled: false },
+                fontSize: 14,
+                wordWrap: "on",
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                tabSize: 2,
+                insertSpaces: true,
+                renderWhitespace: "selection",
+                lineNumbersMinChars: 3,
+                glyphMargin: false,
+                folding: false,
+                lineDecorationsWidth: 10,
+                overviewRulerBorder: false,
+                padding: { top: 10, bottom: 10 },
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
-// Helper function
-const getDifficultyColor = (difficulty) => {
-  switch (difficulty?.toLowerCase()) {
-    case 'easy': return '#4caf50';
-    case 'medium': return '#ff9800';
-    case 'hard': return '#f44336';
-    default: return '#757575';
-  }
-};
-
-// Styles
-const containerStyle = {
-  display: "flex",
-  height: "90vh",
-  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-};
-
-const leftPanelStyle = {
-  flex: 1,
-  borderRight: "1px solid #e0e0e0",
-  display: "flex",
-  flexDirection: "column",
-  backgroundColor: "#fafafa",
-};
-
-const problemSectionStyle = {
-  padding: "20px",
-  borderBottom: "1px solid #e0e0e0",
-  backgroundColor: "white",
-};
-
-const problemTitleStyle = {
-  margin: "0 0 15px 0",
-  color: "#1976d2",
-  fontSize: "1.5rem",
-};
-
-const problemDescStyle = {
-  margin: "0 0 15px 0",
-  lineHeight: "1.6",
-  color: "#424242",
-};
-
-const problemDiffStyle = {
-  margin: 0,
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-};
-
-const difficultyBadgeStyle = {
-  color: "white",
-  padding: "4px 12px",
-  borderRadius: "12px",
-  fontSize: "0.8rem",
-  fontWeight: "bold",
-};
-
-const loadingStyle = {
-  padding: "20px",
-  textAlign: "center",
-  color: "#757575",
-};
-
-const chatContainerStyle = {
-  flex: 1,
-  maxHeight: '70vh', 
-  display: "flex",
-  flexDirection: "column",
-  margin: "10px",
-  backgroundColor: "white",
-  borderRadius: "8px",
-  border: "1px solid #e0e0e0",
-  overflowY: "auto",
-};
-
-const chatHeaderStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "15px",
-  borderBottom: "1px solid #e0e0e0",
-  backgroundColor: "#f5f5f5",
-  borderRadius: "8px 8px 0 0",
-};
-
-const chatTitleStyle = {
-  margin: 0,
-  fontSize: "1.1rem",
-  color: "#1976d2",
-};
-
-const clearChatBtnStyle = {
-  padding: "4px 12px",
-  border: "1px solid #e0e0e0",
-  borderRadius: "4px",
-  backgroundColor: "white",
-  cursor: "pointer",
-  fontSize: "0.8rem",
-};
-
-const chatMessagesStyle = {
-  flex: 1,
-  padding: "15px",
-  overflowY: "auto",
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px",
-};
-
-const messageStyle = {
-  maxWidth: "85%",
-  padding: "12px",
-  borderRadius: "12px",
-  border: "1px solid #e0e0e0",
-};
-
-const messageSenderStyle = {
-  fontSize: "0.8rem",
-  fontWeight: "bold",
-  marginBottom: "5px",
-  opacity: 0.8,
-};
-
-const messageTextStyle = {
-  lineHeight: "1.4",
-  whiteSpace: "pre-wrap",
-};
-
-const chatActionsStyle = {
-  padding: "15px",
-  display: "flex",
-  gap: "8px",
-  borderTop: "1px solid #e0e0e0",
-  backgroundColor: "#f9f9f9",
-  borderRadius: "0 0 8px 8px",
-};
-
-const actionBtnStyle = {
-  flex: 1,
-  padding: "10px",
-  border: "none",
-  borderRadius: "6px",
-  color: "white",
-  cursor: "pointer",
-  fontWeight: "500",
-  fontSize: "0.9rem",
-  transition: "opacity 0.2s",
-};
-
-const rightPanelStyle = {
-  flex: 1,
-  display: "flex",
-  flexDirection: "column",
-};
-
-const editorHeaderStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "10px 15px",
-  backgroundColor: "#f5f5f5",
-  borderBottom: "1px solid #e0e0e0",
-};
-
-const editorTitleStyle = {
-  fontWeight: "500",
-  color: "#424242",
-};
-
-const clearCodeBtnStyle = {
-  padding: "6px 12px",
-  border: "1px solid #e0e0e0",
-  borderRadius: "4px",
-  backgroundColor: "white",
-  cursor: "pointer",
-  fontSize: "0.8rem",
-  color: "#d32f2f",
-};
-
-const editorContainerStyle = {
-  flex: 1,
-};
-

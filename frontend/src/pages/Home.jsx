@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Sun, Moon, Menu, X, Code2, Code, Brain, LineChart, MessageSquare, Zap, Award, BookOpen, Laptop, ArrowRight, Github, Twitter, Linkedin, Facebook, Sparkles } from 'lucide-react';
 
 const Button = ({
@@ -120,12 +121,16 @@ const Navbar = () => {
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="primary" size="sm">
-              Sign In
-            </Button>
-            <Button variant="outline" size="sm">
-              Sign Up
-            </Button>
+            <Link to="/problems">
+              <Button variant="primary" size="sm">
+               Sign In
+              </Button>
+            </Link>
+            <Link to="/problems">
+              <Button variant="outline" size="sm">
+                Sign Up
+              </Button>
+            </Link>
           </div>
           
           <div className="md:hidden flex items-center space-x-4">
