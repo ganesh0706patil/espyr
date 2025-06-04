@@ -53,7 +53,7 @@ uvicorn main:app --reload
 ## Frontend (React)
 cd frontend
 npm install
-npm start
+npm run dev
 
 
 ## 🌍 API Endpoints
