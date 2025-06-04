@@ -26,20 +26,20 @@ const mentorScripts = {
 
 export default function DynamicMentor() {
   const [skill, setSkill] = useState("Beginner");
-  const [chat, setChat] = useState(mentorScripts["Beginner"].filter(m => m.from !== "user"));
+  const [chat, setChat] = useState(mentorScripts["Beginner"].filter((m) => m.from !== "user"));
   const [userInput, setUserInput] = useState("");
   const [editorOpen, setEditorOpen] = useState(false);
   const [code, setCode] = useState("// Write your solution here");
 
   useEffect(() => {
-    setChat(mentorScripts[skill].filter(m => m.from !== "user"));
+    setChat(mentorScripts[skill].filter((m) => m.from !== "user"));
     setUserInput("");
     setEditorOpen(false);
   }, [skill]);
 
   function handleUserSubmit() {
     if (!userInput.trim()) return;
-    setChat(prev => [...prev, { from: "user", text: userInput }]);
+    setChat((prev) => [...prev, { from: "user", text: userInput }]);
     setUserInput("");
 
     const allMessages = mentorScripts[skill];
@@ -48,7 +48,7 @@ export default function DynamicMentor() {
     if (nextIndex < allMessages.length) {
       const nextMsg = allMessages[nextIndex];
       if (nextMsg.from === "mentor" || nextMsg.from === "codeAgent") {
-        setChat(prev => [...prev, nextMsg]);
+        setChat((prev) => [...prev, nextMsg]);
         if (nextMsg.toolCall === "open_editor") {
           setEditorOpen(true);
         }
@@ -57,22 +57,13 @@ export default function DynamicMentor() {
   }
 
   return (
-    <div style={{ display: "flex", height: "90vh", fontFamily: "Arial, sans-serif" }}>
-      <div
-        style={{
-          flex: 1,
-          borderRight: "1px solid #ddd",
-          padding: 20,
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: "#fefefe",
-        }}
-      >
-        <h3>Choose Skill Level</h3>
+    <div className="flex h-[90vh] font-sans">
+      <div className="flex-1 border-r border-gray-300 p-5 flex flex-col bg-white">
+        <h3 className="text-lg font-semibold mb-4">Choose Skill Level</h3>
         <select
           value={skill}
           onChange={(e) => setSkill(e.target.value)}
-          style={{ marginBottom: 20, padding: 8, fontSize: 16 }}
+          className="mb-5 p-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {skillLevels.map((lvl) => (
             <option key={lvl} value={lvl}>
@@ -81,34 +72,23 @@ export default function DynamicMentor() {
           ))}
         </select>
 
-        <div
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            border: "1px solid #ccc",
-            padding: 12,
-            backgroundColor: "#fafafa",
-            marginBottom: 10,
-            borderRadius: 6,
-          }}
-        >
+        <div className="flex-1 overflow-y-auto border border-gray-300 p-3 bg-gray-50 rounded-md mb-3">
           {chat.map((msg, i) => (
             <div
               key={i}
-              style={{
-                marginBottom: 12,
-                textAlign: msg.from === "mentor" || msg.from === "codeAgent" ? "left" : "right",
-                color:
-                  msg.from === "mentor"
-                    ? "#0070f3"
-                    : msg.from === "codeAgent"
-                    ? "#6a0dad"
-                    : "#1a8917",
-                fontStyle: msg.from === "codeAgent" ? "italic" : "normal",
-                whiteSpace: "pre-wrap",
-              }}
+              className={`mb-3 whitespace-pre-wrap ${
+                msg.from === "mentor" || msg.from === "codeAgent" ? "text-left" : "text-right"
+              }`}
             >
-              <strong>
+              <strong
+                className={`${
+                  msg.from === "mentor"
+                    ? "text-blue-600"
+                    : msg.from === "codeAgent"
+                    ? "text-purple-700 italic"
+                    : "text-green-700"
+                }`}
+              >
                 {msg.from === "mentor"
                   ? "Mentor"
                   : msg.from === "codeAgent"
@@ -121,7 +101,7 @@ export default function DynamicMentor() {
           ))}
         </div>
 
-        <div>
+        <div className="flex items-center">
           <input
             type="text"
             value={userInput}
@@ -129,37 +109,26 @@ export default function DynamicMentor() {
             placeholder={
               mentorScripts[skill].find((m) => m.from === "user")?.placeholder || "Your answer..."
             }
-            style={{
-              width: "75%",
-              padding: "10px",
-              fontSize: 16,
-              borderRadius: 4,
-              border: "1px solid #ccc",
-            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleUserSubmit();
             }}
+            className="w-3/4 p-3 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             onClick={handleUserSubmit}
             disabled={!userInput.trim()}
-            style={{
-              padding: "10px 16px",
-              marginLeft: 12,
-              backgroundColor: "#0070f3",
-              border: "none",
-              color: "white",
-              fontWeight: "bold",
-              borderRadius: 4,
-              cursor: userInput.trim() ? "pointer" : "not-allowed",
-            }}
+            className={`ml-3 px-5 py-3 font-semibold rounded-md text-white ${
+              userInput.trim()
+                ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                : "bg-blue-300 cursor-not-allowed"
+            }`}
           >
             Submit
           </button>
         </div>
       </div>
 
-      <div style={{ flex: 1, display: editorOpen ? "block" : "none" }}>
+      <div className={`flex-1 ${editorOpen ? "block" : "hidden"}`}>
         <Editor
           height="100%"
           defaultLanguage="javascript"

@@ -248,69 +248,80 @@ export default function Practice() {
     handleSendMessage("Can you explain the problem approach?");
   }, [handleSendMessage]);
 
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty?.toLowerCase()) {
+      case 'easy': return 'bg-green-500';
+      case 'medium': return 'bg-yellow-500';
+      case 'hard': return 'bg-red-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
   return (
-    <div style={containerStyle}>
+    <div className="flex h-[90vh] font-sans">
       {/* Left Panel */}
-      <div style={leftPanelStyle}>
+      <div className="flex-1 border-r border-gray-200 flex flex-col bg-gray-50">
         {problem ? (
-          <div style={problemSectionStyle}>
-            <h2 style={problemTitleStyle}>{problem.title}</h2>
-            <p style={problemDescStyle}>{problem.description}</p>
-            <p style={problemDiffStyle}>
+          <div className="p-5 border-b border-gray-200 bg-white">
+            <h2 className="m-0 mb-4 text-blue-700 text-2xl">{problem.title}</h2>
+            <p className="m-0 mb-4 text-gray-700 leading-relaxed">{problem.description}</p>
+            <p className="m-0 flex items-center gap-2">
               <strong>Difficulty:</strong>
-              <span style={{
-                ...difficultyBadgeStyle,
-                backgroundColor: getDifficultyColor(problem.difficulty)
-              }}>
+              <span className={`text-white px-3 py-1 rounded-full text-sm font-bold ${getDifficultyColor(problem.difficulty)}`}>
                 {problem.difficulty}
               </span>
             </p>
           </div>
         ) : (
-          <div style={loadingStyle}>Loading problem...</div>
+          <div className="p-5 text-center text-gray-500">Loading problem...</div>
         )}
 
         {/* Chat Section */}
-        <div style={chatContainerStyle}>
-          <div style={chatHeaderStyle}>
-            <h3 style={chatTitleStyle}>AI Assistant</h3>
-            <button onClick={clearChat} style={clearChatBtnStyle}>
+        <div className="flex-1 m-2 flex flex-col bg-white rounded-lg border border-gray-200">
+          <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+            <h3 className="m-0 text-lg text-blue-700">AI Assistant</h3>
+            <button 
+              onClick={clearChat} 
+              className="px-3 py-1 border border-gray-200 rounded bg-white cursor-pointer text-sm"
+            >
               Clear
             </button>
           </div>
 
-          <div style={chatMessagesStyle}>
+          <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-2">
             {chatMessages.map((msg, i) => (
               <div
-                key={`${id}-${i}`} // Stable key that includes question ID
-                style={{
-                  ...messageStyle,
-                  alignSelf: msg.from === "ai" ? "flex-start" : "flex-end",
-                  backgroundColor: msg.from === "ai" ? "#e3f2fd" : "#e8f5e8",
-                }}
+                key={`${id}-${i}`}
+                className={`max-w-[85%] p-3 rounded-xl border border-gray-200 ${
+                  msg.from === "ai" 
+                    ? "self-start bg-blue-50" 
+                    : "self-end bg-green-50"
+                }`}
               >
-                <div style={messageSenderStyle}>
+                <div className="text-sm font-bold mb-1 opacity-80">
                   {msg.from === "ai" ? "🤖 AI" : "👤 You"}
                 </div>
-                <div style={messageTextStyle}>{msg.text}</div>
+                <div className="leading-relaxed whitespace-pre-wrap">
+                  {msg.text}
+                </div>
               </div>
             ))}
             {isLoading && (
-              <div style={{ ...messageStyle, backgroundColor: "#f5f5f5" }}>
-                <div style={messageSenderStyle}>🤖 AI</div>
-                <div style={messageTextStyle}>Thinking...</div>
+              <div className="max-w-[85%] p-3 rounded-xl border border-gray-200 self-start bg-gray-50">
+                <div className="text-sm font-bold mb-1 opacity-80">🤖 AI</div>
+                <div className="leading-relaxed">Thinking...</div>
               </div>
             )}
           </div>
 
-
-
           {/* Chat Actions */}
-          <div style={chatActionsStyle}>
+          <div className="p-4 flex gap-2 border-t border-gray-200 bg-gray-50 rounded-b-lg">
             <button
               onClick={() => handleSendMessage()}
               disabled={isLoading}
-              style={{ ...actionBtnStyle, backgroundColor: "#2196f3" }}
+              className={`flex-1 py-2 rounded text-white font-medium text-sm transition-opacity ${
+                isLoading ? 'bg-blue-400' : 'bg-blue-500 hover:opacity-90'
+              }`}
             >
               {isLoading ? "Analyzing..." : "Analyze Code"}
             </button>
@@ -318,7 +329,7 @@ export default function Practice() {
             <button
               onClick={handleHint}
               disabled={isLoading}
-              style={{ ...actionBtnStyle, backgroundColor: "#4caf50" }}
+              className="flex-1 py-2 rounded text-white font-medium text-sm bg-green-500 hover:opacity-90 disabled:opacity-70"
             >
               Get Hint
             </button>
@@ -326,7 +337,7 @@ export default function Practice() {
             <button
               onClick={handleExplain}
               disabled={isLoading}
-              style={{ ...actionBtnStyle, backgroundColor: "#ff9800" }}
+              className="flex-1 py-2 rounded text-white font-medium text-sm bg-yellow-500 hover:opacity-90 disabled:opacity-70"
             >
               Explain
             </button>
@@ -335,35 +346,34 @@ export default function Practice() {
       </div>
 
       {/* Right Panel - Editor */}
-      <div style={rightPanelStyle}>
-        <div style={editorHeaderStyle}>
-          <span style={editorTitleStyle}>Code Editor</span>
-          <select
-            value={language}
-            onChange={(e) => handleLanguageChange(e.target.value)}
-            style={{
-              marginLeft: "10px",
-              padding: "5px",
-              borderRadius: "4px",
-              border: "1px solid #e0e0e0",
-              fontSize: "0.9rem",
-            }}
-          >
-            {LANGUAGES.map((lang) => (
-              <option key={lang.id} value={lang.id}>
-                {lang.name}
-              </option>
-            ))}
-          </select>
-          <button onClick={clearCode} style={clearCodeBtnStyle}>
-            Clear Code
-          </button>
+      <div className="flex-1 flex flex-col">
+        <div className="flex justify-between items-center p-3 bg-gray-50 border-b border-gray-200">
+          <span className="font-medium text-gray-700">Code Editor</span>
+          <div className="flex items-center gap-2">
+            <select
+              value={language}
+              onChange={(e) => handleLanguageChange(e.target.value)}
+              className="ml-2 px-2 py-1 rounded border border-gray-200 text-sm"
+            >
+              {LANGUAGES.map((lang) => (
+                <option key={lang.id} value={lang.id}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+            <button 
+              onClick={clearCode} 
+              className="px-3 py-1 border border-gray-200 rounded bg-white cursor-pointer text-sm text-red-600"
+            >
+              Clear Code
+            </button>
+          </div>
         </div>
 
-        <div style={editorContainerStyle}>
+        <div className="flex-1">
           <Editor
             height="100%"
-            language={language} // Dynamically set the language
+            language={language}
             value={code}
             onChange={handleCodeChange}
             options={{
@@ -565,3 +575,4 @@ const clearCodeBtnStyle = {
 const editorContainerStyle = {
   flex: 1,
 };
+

@@ -16,8 +16,8 @@ export default function MentorAgent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_input: question,
-          skill_level: "beginner",   // can be dynamic later
-          problem_id: "two-sum",     // example, change as needed
+          skill_level: "beginner", // can be dynamic later
+          problem_id: "two-sum",   // example, change as needed
         }),
       });
 
@@ -34,29 +34,33 @@ export default function MentorAgent() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4">Mentor Agent</h1>
-      <form onSubmit={handleSubmit} className="mb-6">
+    <div className="max-w-3xl mx-auto px-4 py-10">
+      <h1 className="text-4xl font-bold text-center text-slate-800 mb-6">
+        Mentor Agent
+      </h1>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         <textarea
           placeholder="Ask a question..."
-          className="w-full p-3 border border-gray-300 rounded"
-          rows={4}
+          className="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          rows={5}
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           required
         />
         <button
           type="submit"
-          className="mt-3 bg-indigo-600 text-white px-5 py-2 rounded hover:bg-indigo-700"
+          className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
           disabled={loading}
         >
           {loading ? "Thinking..." : "Ask"}
         </button>
       </form>
+
       {answer && (
-        <div className="bg-gray-100 p-4 rounded border border-gray-300">
-          <h2 className="font-semibold mb-2">Answer:</h2>
-          <p>{answer}</p>
+        <div className="mt-6 bg-white border border-gray-300 rounded-lg p-5 shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-700 mb-2">Answer:</h2>
+          <p className="text-gray-800 whitespace-pre-line">{answer}</p>
         </div>
       )}
     </div>

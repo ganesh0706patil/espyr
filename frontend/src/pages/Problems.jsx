@@ -7,20 +7,12 @@ export default function Problems() {
   const [clickedIndex, setClickedIndex] = useState(null);
   const navigate = useNavigate();
 
-  // Load questions from src/data/questions.json
   useEffect(() => {
-    // Option 1: Import the JSON file directly (recommended)
-    import('../data/questions.json')
-      .then(module => {
+    import("../data/questions.json")
+      .then((module) => {
         setQuestions(module.default);
       })
       .catch((err) => console.error("Failed to load questions:", err));
-
-    // Option 2: If you prefer fetch and move the file to public folder
-    // fetch("/data/questions.json")
-    //   .then((res) => res.json())
-    //   .then(setQuestions)
-    //   .catch((err) => console.error("Failed to load questions:", err));
   }, []);
 
   const handleCodeClick = (index, questionId) => {
@@ -30,103 +22,51 @@ export default function Problems() {
   };
 
   return (
-    <div style={containerStyle}>
-      <div style={questionsListStyle}>
+    <div className="flex h-[80vh] border border-gray-300 rounded-lg overflow-hidden shadow-md">
+      <div className="w-72 border-r border-gray-300 bg-gray-50 p-4 overflow-y-auto">
         {questions.map((q, i) => (
           <div
             key={q.id}
-            style={{
-              ...questionItemStyle,
-              border: selectedIndex === i ? "2px solid #3b82f6" : "none",
-              cursor: "pointer",
-            }}
             onClick={() => setSelectedIndex(i)}
+            className={`mb-4 p-2 bg-white rounded-md shadow-sm flex justify-between items-center cursor-pointer
+              ${selectedIndex === i ? "border-2 border-blue-500" : "border-none"}`}
           >
             <div>
-              <strong>{q.title}</strong>
-              <div style={{ fontSize: "0.9rem", color: "#666" }}>
-                Difficulty: {q.difficulty}
-              </div>
+              <strong className="block">{q.title}</strong>
+              <div className="text-sm text-gray-600">Difficulty: {q.difficulty}</div>
             </div>
             <button
-              style={buttonStyle}
               onClick={(e) => {
                 e.stopPropagation();
                 handleCodeClick(i, q.id);
               }}
+              className="ml-2 px-3 py-1 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 focus:outline-none"
             >
               Code
             </button>
             {clickedIndex === i && (
-              <div style={messageStyle}>Loading editor...</div>
+              <div className="absolute mt-10 p-2 bg-yellow-100 text-yellow-800 rounded-md font-semibold">
+                Loading editor...
+              </div>
             )}
           </div>
         ))}
       </div>
 
-      <div style={{ flex: 1, padding: "1rem" }}>
+      <div className="flex-1 p-4">
         {selectedIndex !== null ? (
           <>
-            <h2>{questions[selectedIndex].title}</h2>
-            <p>{questions[selectedIndex].description}</p>
+            <h2 className="text-2xl font-bold mb-2">{questions[selectedIndex].title}</h2>
+            <p className="mb-4">{questions[selectedIndex].description}</p>
             <p>
               <strong>Difficulty: </strong>
               {questions[selectedIndex].difficulty}
             </p>
           </>
         ) : (
-          <h2>Select a question to view details</h2>
+          <h2 className="text-xl text-gray-500">Select a question to view details</h2>
         )}
       </div>
     </div>
   );
 }
-
-// 💄 Inline Styles
-const containerStyle = {
-  display: "flex",
-  height: "80vh",
-  border: "1px solid #ddd",
-  borderRadius: "8px",
-  overflow: "hidden",
-  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-};
-
-const questionsListStyle = {
-  width: "300px",
-  borderRight: "1px solid #ddd",
-  backgroundColor: "#f9fafb",
-  padding: "1rem",
-  overflowY: "auto",
-};
-
-const questionItemStyle = {
-  marginBottom: "1rem",
-  padding: "0.5rem",
-  backgroundColor: "#fff",
-  borderRadius: "6px",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-};
-
-const buttonStyle = {
-  marginLeft: "10px",
-  padding: "6px 12px",
-  border: "none",
-  borderRadius: "4px",
-  backgroundColor: "#3b82f6",
-  color: "white",
-  cursor: "pointer",
-  fontWeight: "600",
-};
-
-const messageStyle = {
-  marginTop: "10px",
-  padding: "8px",
-  backgroundColor: "#fef3c7",
-  color: "#92400e",
-  borderRadius: "6px",
-  fontWeight: "600",
-};
