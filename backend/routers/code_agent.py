@@ -19,7 +19,7 @@ async def analyze_code(request: CodeRequest):
     try:
         system_prompt = (
             "You are an expert coding assistant. Analyze the code for the given question. "
-            "Check if it is correct and provide concise feedback (2 to 3 lines)."
+            "Check if it is correct and provide concise feedback (2 to 3 lines). do not provide the answer code"
         )
 
         full_prompt = f"Question:\n{request.question}\n\nUser's Code:\n{request.code}"
