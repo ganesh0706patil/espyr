@@ -12,7 +12,6 @@ function App() {
   return (
     <>
       <Router>
-        <Navbar/>
         <Routes>
           <Route index element={<Home/>}/>
           <Route path="/problems" element={<Problems />} />
