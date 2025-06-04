@@ -173,36 +173,45 @@ export default function Practice() {
 
   const handleSendMessage = useCallback(async (customMessage = null) => {
     const message = customMessage || "Please analyze my code.";
-
+  
     setChatMessages(prev => [...prev, { from: "user", text: message }]);
     setIsLoading(true);
-
+  
     try {
       const endpoint = customMessage ? "chat" : "analyze";
+  
       const payload = customMessage
         ? { message: customMessage, code, language, problemId: id, problem }
-        : { code, language, problemId: id, problem };
-
+        : { code, question: problem?.toString() || "Explain this code" };
+  
+      console.log("Sending payload to backend:", payload);
+  
       const response = await fetch(`http://localhost:8000/code-agent/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Backend error:", errorData);
+        setChatMessages(prev => [...prev, { from: "ai", text: "Backend error: " + (errorData.error || "Unknown error") }]);
+        setIsLoading(false);
+        return;
+      }
+  
       const data = await response.json();
       const aiResponse = data.feedback || data.response || "No response from backend";
-
+  
       setChatMessages(prev => [...prev, { from: "ai", text: aiResponse }]);
     } catch (error) {
-      console.error("Backend communication error:", error);
-      setChatMessages(prev => [
-        ...prev,
-        { from: "ai", text: "Error communicating with backend. Please try again." },
-      ]);
+      console.error("Fetch error:", error);
+      setChatMessages(prev => [...prev, { from: "ai", text: "Error connecting to backend" }]);
     } finally {
       setIsLoading(false);
     }
   }, [code, language, id, problem]);
+  
 
   const clearChat = useCallback(() => {
     const defaultChat = [{ from: "ai", text: "Ask me anything about this problem!" }];
@@ -439,12 +448,14 @@ const loadingStyle = {
 
 const chatContainerStyle = {
   flex: 1,
+  maxHeight: '70vh', 
   display: "flex",
   flexDirection: "column",
   margin: "10px",
   backgroundColor: "white",
   borderRadius: "8px",
   border: "1px solid #e0e0e0",
+  overflowY: "auto",
 };
 
 const chatHeaderStyle = {
