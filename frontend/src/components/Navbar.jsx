@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Menu, X, Code2 } from "lucide-react";
+import { SignedIn, SignOutButton } from "@clerk/clerk-react";
+import { UserButton } from "@clerk/clerk-react";
+import { useClerk } from "@clerk/clerk-react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,21 +13,23 @@ export default function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Filter out "Home" from navLinks because we won't show it
   const navLinks = [
-    { path: "/", label: "Home" },
     { path: "/problems", label: "Problems" },
     { path: "/mentor-agent", label: "Mentor Agent" },
     { path: "/mentor", label: "Mentor" },
     { path: "/practice/1", label: "Practice" },
   ];
-
+const Navbar=()=>{
+  const {User}=useClerk();
+}
   return (
-    <nav className={`sticky top-0 z-50 bg-white shadow-md`}> {/* Changed to sticky and always has shadow */}
+    <nav className={`sticky top-0 z-50 bg-white shadow-md`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -37,6 +42,13 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6">
+            <SignedIn>
+  <SignOutButton>
+    <button className="text-gray-800 hover:text-orange-700 font-medium transition-colors duration-300 cursor-pointer">
+      Home
+    </button>
+  </SignOutButton>
+</SignedIn>
             {navLinks.map(({ path, label }) => (
               <NavLink
                 key={path}
@@ -50,6 +62,12 @@ export default function Navbar() {
                 {label}
               </NavLink>
             ))}
+
+            <div>
+              <UserButton/>
+            </div>
+            
+
           </div>
 
           {/* Mobile Menu Button */}
@@ -68,6 +86,14 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
         <div className="md:hidden bg-white shadow-lg">
+          <SignedIn>
+  <SignOutButton>
+    <button className="text-gray-800 hover:text-orange-700 font-medium transition-colors duration-300 cursor-pointer">
+      Home
+    </button>
+  </SignOutButton>
+</SignedIn>
+
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navLinks.map(({ path, label }) => (
               <NavLink
@@ -83,6 +109,9 @@ export default function Navbar() {
                 {label}
               </NavLink>
             ))}
+
+           
+            
           </div>
         </div>
       )}

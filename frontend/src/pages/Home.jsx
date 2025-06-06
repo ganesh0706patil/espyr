@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Sun, Moon, Menu, X, Code2, Code, Brain, LineChart, MessageSquare, Zap, Award, BookOpen, Laptop, ArrowRight, Github, Twitter, Linkedin, Facebook, Sparkles } from 'lucide-react';
+import { SignInButton, SignUpButton } from "@clerk/clerk-react";
 
 const Button = ({
   variant = 'primary',
@@ -9,7 +10,7 @@ const Button = ({
   className,
   ...props
 }) => {
-  const baseStyles = "font-medium rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  const baseStyles = "font-medium rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer";
   
   const variantStyles = {
     primary: "bg-orange-700 hover:bg-orange-800 text-white shadow-lg hover:shadow-xl focus:ring-orange-500 transform hover:scale-105 active:scale-95",
@@ -113,30 +114,31 @@ const Navbar = () => {
               <button 
                 key={link.name}
                 onClick={() => scrollToSection(link.id)}
-                className="text-gray-800 hover:text-orange-700 font-medium transition-colors duration-300 cursor-pointer"
+                className="text-gray-800 hover:text-orange-700 font-medium transition-colors duration-300  cursor-pointer"
               >
                 {link.name}
               </button>
             ))}
           </div>
           
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/problems">
-              <Button variant="primary" size="sm">
-               Sign In
-              </Button>
-            </Link>
-            <Link to="/problems">
-              <Button variant="outline" size="sm">
-                Sign Up
-              </Button>
-            </Link>
+          <div className="hidden md:flex items-center space-x-4 ">
+            <SignInButton forceRedirectUrl="/problems">
+  <Button variant="primary" size="sm">
+    Sign In
+  </Button>
+</SignInButton>
+
+<SignUpButton forceRedirectUrl="/problems">
+  <Button variant="outline" size="sm">
+    Sign Up
+  </Button>
+</SignUpButton>
           </div>
           
           <div className="md:hidden flex items-center space-x-4">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-full text-gray-700 hover:bg-gray-100 transition-colors duration-300"
+              className="p-2 rounded-full text-gray-700 hover:bg-gray-100 transition-colors duration-300 cursor-pointer"
               aria-label="Open menu"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -195,13 +197,18 @@ const Hero = () => {
               Practice coding problems, get personalized feedback, and accelerate your learning with AI-powered mentorship. Land your dream tech job faster.
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-              <Button variant="primary" size="lg">
-                Get Started Free
-              </Button>
-              <Button variant="outline" size="lg">
-                Explore Problems
-              </Button>
+            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4 ">
+              <SignInButton forceRedirectUrl="/problems">
+  <Button variant="primary" size="lg">
+    Get Started
+  </Button>
+</SignInButton>
+              
+              <SignInButton forceRedirectUrl="/problems">
+  <Button variant="outline" size="lg">
+    Explore Problems
+  </Button>
+</SignInButton>
             </div>
             
             <div className="mt-12 flex items-center justify-center md:justify-start space-x-6">
@@ -390,9 +397,15 @@ const CallToAction = () => {
                   Join thousands of developers who have transformed their careers with DSA Coach. Start practicing today and get access to 500+ problems, AI mentorship, and more.
                 </p>
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                  <Button variant="primary" size="lg" className="text-orange-800   hover:bg-gray-100">
-                    Start Free 
-                  </Button>
+                  <SignUpButton forceRedirectUrl="/problems">
+  <Button
+    variant="primary"
+    size="lg"
+    className="text-orange-800 hover:bg-gray-100"
+  >
+    Start Free
+  </Button>
+</SignUpButton>
                   <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
                     View Pricing <ArrowRight size={16} className="ml-2" />
                   </Button>
@@ -481,7 +494,7 @@ const Footer = () => {
                 <a 
                   key={i}
                   href="#"
-                  className="text-gray-500 hover:text-orange-700 transition-colors duration-300"
+                  className="text-gray-500 hover:text-orange-700 transition-colors duration-300 cursor-pointer"
                   aria-label={`${Icon.name} link`}
                 >
                   <Icon size={20} />
@@ -516,7 +529,7 @@ const Footer = () => {
             &copy; {currentYear} DSA Coach. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0">
-            <select className="bg-white border border-gray-300 rounded-md py-1 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <select className="bg-white border border-gray-300 rounded-md py-1 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer">
               <option value="en">English</option>
               <option value="es">Español</option>
               <option value="fr">Français</option>
