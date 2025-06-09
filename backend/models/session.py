@@ -8,7 +8,7 @@ class ChatMessage(BaseModel):
 class MentorRequest(BaseModel):
     user_input: str
     skill_level: str
-    problem_id: str
+    problem_description: str
 
 class MentorResponse(BaseModel):
     message: str

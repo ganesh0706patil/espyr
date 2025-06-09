@@ -2,16 +2,19 @@
   {
     "id": 1,
     "title": "Two Sum",
-    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target."
+    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+    "difficulty": "Easy"
   },
   {
     "id": 2,
     "title": "Longest Substring Without Repeating Characters",
-    "description": "Given a string s, find the length of the longest substring without repeating characters."
+    "description": "Find the length of the longest substring without repeating characters.",
+    "difficulty": "Medium"
   },
   {
     "id": 3,
-    "title": "Valid Parentheses",
-    "description": "Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid."
+    "title": "Median of Two Sorted Arrays",
+    "description": "Find the median of two sorted arrays.",
+    "difficulty": "Hard"
   }
 ]
