@@ -27,37 +27,24 @@ export default function Problems() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
-      <div className="flex-1 p-4 pt-6 ">
+      <div className="flex-1 p-4 pt-6">
         <div className="text-center mb-4">
           <motion.h2
-  className="
-    text-center
-    text-4xl font-bold
-    bg-gradient-to-r from-gray-600 to-gray-700
-    text-transparent bg-clip-text
-    tracking-tight
-    py-3 relative
-    mb-3
-    font-sans
-  "
-  initial={{ opacity: 0, y: -5 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.4, ease: "easeOut" }}
->
-  Problem Set
-  <motion.span
-    className="
-      absolute bottom-1 left-1/2 -translate-x-1/2
-      w-16 h-0.5
-      bg-gradient-to-r from-gray-500 to-gray-600
-      rounded-full
-    "
-    initial={{ scaleX: 0 }}
-    animate={{ scaleX: 1 }}
-    transition={{ delay: 0.2, duration: 0.6, ease: "backOut" }}
-  />
-</motion.h2>
+            className="text-4xl font-bold bg-gradient-to-r from-gray-600 to-gray-700 text-transparent bg-clip-text tracking-tight py-3 relative mb-3 font-sans"
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            Problem Set
+            <motion.span
+              className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-0.5 bg-gradient-to-r from-gray-500 to-gray-600 rounded-full"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ delay: 0.2, duration: 0.6, ease: "backOut" }}
+            />
+          </motion.h2>
         </div>
+
         <div className="h-full border border-gray-200 rounded-lg overflow-hidden shadow-lg bg-white">
           <div className="flex h-full">
             {/* Questions List */}
@@ -68,13 +55,13 @@ export default function Problems() {
                   onClick={() => setSelectedIndex(i)}
                   onMouseEnter={() => setHoveredIndex(i)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  className={`mb-3 p-3 rounded-lg transition-all duration-200 cursor-pointer flex justify-between items-center relative
+                  className={`mb-3 p-3 rounded-lg transition-all duration-200 cursor-pointer flex flex-col gap-2 relative
                     ${selectedIndex === i 
                       ? "bg-orange-50 border-2 border-orange-500" 
                       : "bg-white border border-gray-200"}
                     ${hoveredIndex === i && selectedIndex !== i ? "border-orange-300 shadow-md" : ""}`}
                 >
-                  <div className="flex-1">
+                  <div>
                     <strong className="block text-gray-800">{q.title}</strong>
                     <div className={`text-sm mt-1 ${
                       q.difficulty === "Easy" ? "text-green-600" :
@@ -84,16 +71,31 @@ export default function Problems() {
                       {q.difficulty}
                     </div>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCodeClick(i, q.id);
-                    }}
-                    className="ml-2 px-3 py-1 rounded-md bg-orange-600 text-white font-semibold hover:bg-orange-700 
-                      focus:outline-none transition-colors duration-200 shadow-sm cursor-pointer"
-                  >
-                    Solve
-                  </button>
+
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCodeClick(i, q.id);
+                      }}
+                      className="flex-1 px-3 py-1 rounded-md bg-orange-600 text-white font-semibold hover:bg-orange-700 
+                        focus:outline-none transition-colors duration-200 shadow-sm cursor-pointer"
+                    >
+                      Solve
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/mentor/${q.id}`);
+                      }}
+                      className="flex-1 px-3 py-1 rounded-md bg-indigo-600 text-white font-semibold hover:bg-indigo-700 
+                        focus:outline-none transition-colors duration-200 shadow-sm cursor-pointer"
+                    >
+                      Mentor
+                    </button>
+                  </div>
+
                   {clickedIndex === i && (
                     <div className="absolute -bottom-2 left-0 right-0 mx-auto w-max px-3 py-1 bg-orange-100 text-orange-800 rounded-md font-medium text-xs shadow-sm">
                       Loading editor...

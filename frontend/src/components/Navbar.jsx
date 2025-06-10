@@ -21,9 +21,7 @@ export default function Navbar() {
   // Filter out "Home" from navLinks because we won't show it
   const navLinks = [
     { path: "/problems", label: "Problems" },
-    { path: "/mentor-agent", label: "Mentor Agent" },
-    { path: "/mentor", label: "Mentor" },
-    { path: "/practice/1", label: "Practice" },
+    {path: "/dashboard",label:"Dashboard"},
   ];
 const Navbar=()=>{
   const {User}=useClerk();

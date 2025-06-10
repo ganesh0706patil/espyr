@@ -26,7 +26,7 @@ const DEFAULT_CODE_TEMPLATES = {
   javascript: '// Start coding here\nfunction solution() {\n    // Your code here\n}',
   python: '# Start coding here\ndef solution():\n    // Your code here\n    pass',
   java: '// Start coding here\npublic class Solution {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}',
-  cpp: '// Start coding here\n#include <iostream>\nusing namespace std;\n\nint main() {\n    // Your code here\n    return 0;\n}',
+  cpp: '// Start coding here\n#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // Your code here\n    return 0;\n}',
   c: '// Start coding here\n#include <stdio.h>\n\nint main() {\n    // Your code here\n    return 0;\n}',
   csharp: '// Start coding here\nusing System;\n\nclass Program {\n    static void Main() {\n        // Your code here\n    }\n}',
   go: '// Start coding here\npackage main\n\nimport "fmt"\n\nfunc main() {\n    // Your code here\n}',
@@ -182,8 +182,16 @@ export default function Practice() {
       const endpoint = customMessage ? "chat" : "analyze";
   
       const payload = customMessage
-        ? { message: customMessage, code, language, problemId: id, problem }
-        : { code, question: problem?.toString() || "Explain this code" };
+  ? {
+      type: customMessage,  // <-- key fix: send type = "hint" or "submit"
+      message: "",           // optional: can be "" if not needed
+      code,
+      question: problem?.toString() || ""
+    }
+  : {
+      code,
+      question: problem?.toString() || "Explain this code"
+    };
   
       console.log("Sending payload to backend:", payload);
   
@@ -241,11 +249,11 @@ export default function Practice() {
   }, [code, language, id]);
 
   const handleHint = useCallback(() => {
-    handleSendMessage("Can you give me a hint for this problem?");
+    handleSendMessage("hint");
   }, [handleSendMessage]);
 
-  const handleExplain = useCallback(() => {
-    handleSendMessage("Can you explain the problem approach?");
+  const handleSubmit = useCallback(() => {
+    handleSendMessage("submit");
   }, [handleSendMessage]);
 
   const getDifficultyColor = (difficulty) => {
@@ -294,7 +302,7 @@ export default function Practice() {
               </button>
             </div>
 
-            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[calc(100vh-350px)]">
               {chatMessages.map((msg, i) => (
                 <div
                   key={`${id}-${i}`}
@@ -345,11 +353,11 @@ export default function Practice() {
               </button>
 
               <button
-                onClick={handleExplain}
+                onClick={handleSubmit}
                 disabled={isLoading}
                 className="px-4 py-2 rounded-md font-medium text-sm bg-white text-orange-600 border border-orange-300 hover:bg-orange-50 transition-colors disabled:opacity-50 cursor-pointer"
               >
-                Explain
+                Submit
               </button>
             </div>
           </div>
