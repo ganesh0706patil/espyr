@@ -16,5 +16,17 @@
     "title": "Median of Two Sorted Arrays",
     "description": "Find the median of two sorted arrays.",
     "difficulty": "Hard"
+  },
+  {
+    "id": 4,
+    "title": "Valid Parentheses",
+    "description": "Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 5,
+    "title": "Merge Intervals",
+    "description": "Given an array of intervals where intervals[i] = [start_i, end_i], merge all overlapping intervals.",
+    "difficulty": "Medium"
   }
 ]
